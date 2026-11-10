@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mapa mental interativo da estrutura pedagógica do Módulo II — Preparação para a implementação do Novo Ciclo Contributivo (SCC), organizado em três unidades e seis sequências de aprendizagem.">
+  <meta name="theme-color" content="#12273f">
+  <title>Mapa mental · Preparação para o Novo Ciclo Contributivo (SCC)</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #13283e;
+      --muted: #5d7186;
+      --soft: #f5f8fc;
+      --line: #dfe8f0;
+      --teal: #077f78;
+      --amber: #a96722;
+      --violet: #6654b4;
+      --surface: #fff;
+      --shadow: 0 16px 45px rgba(19,45,73,.07);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--soft); color: var(--ink); }
+    button { font: inherit; }
+    a { color: #10668c; }
+    a:focus-visible, button:focus-visible, [role="button"]:focus-visible { outline: 3px solid #ffba55; outline-offset: 4px; }
+    .skip-link { position: absolute; top: -80px; left: 14px; background: #fff; z-index: 10; padding: 12px; }
+    .skip-link:focus { top: 12px; }
+    .page { max-width: 1530px; margin: 0 auto; padding: 0 28px 70px; }
+    .hero { position: relative; color: #fff; background: linear-gradient(112deg,#122a45 5%, #1d4561 62%, #165e63 120%); overflow: hidden; }
+    .hero::after { content: ""; position: absolute; width: 510px; height: 510px; right: -140px; top: -245px; border: 2px solid rgba(196,240,242,.13); border-radius: 50%; box-shadow: 0 0 0 80px rgba(196,240,242,.035),0 0 0 155px rgba(196,240,242,.03); pointer-events: none; }
+    .hero-inner { max-width: 1530px; margin: auto; padding: 47px 28px 49px; position: relative; z-index: 1; }
+    .eyebrow { display: inline-block; font-size: .74rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #b7e0df; margin-bottom: 15px; }
+    h1 { margin: 0; max-width: 890px; font-size: clamp(1.9rem,3.1vw,3.3rem); line-height: 1.13; letter-spacing: -.035em; font-weight: 770; }
+    .lead { max-width: 870px; margin: 18px 0 0; font-size: 1rem; line-height: 1.68; color: #d7e7ee; }
+    .stats { margin-top: 25px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .stat { border: 1px solid rgba(237,251,255,.25); background: rgba(255,255,255,.075); border-radius: 999px; padding: 9px 16px; font-size: .9rem; font-weight: 650; }
+    .intro { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 26px 0 17px; }
+    .intro h2 { margin: 0; font-size: 1.35rem; letter-spacing: -.025em; }
+    .intro p { margin: 5px 0 0; color: var(--muted); font-size: .93rem; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .control { background: #fff; border: 1px solid #d7e1eb; color: #263e56; min-height: 40px; border-radius: 10px; padding: 8px 12px; cursor: pointer; font-size: .86rem; font-weight: 700; transition: background .15s, transform .15s; }
+    .control:hover { background: #eaf3f8; transform: translateY(-1px); }
+    .control-primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .control-primary:hover { background: #254766; }
+    .control[aria-pressed="true"] { color: #fff; background: #185e68; border-color: #185e68; }
+    .mindmap-shell { background: #fff; border: 1px solid var(--line); border-radius: 21px; box-shadow: var(--shadow); overflow: hidden; }
+    .map-viewport { position: relative; overflow: auto; background: radial-gradient(circle at 50% 25%, #fff 1%, #f7fafd 100%); cursor: grab; touch-action: pan-x pan-y; }
+    .map-viewport:active { cursor: grabbing; }
+    .map-viewport svg { display: block; width: 100%; aspect-ratio: 1680/930; height: auto; min-height: 540px; user-select: none; -webkit-user-select: none; }
+    .map-viewport svg .node { cursor: pointer; transition: opacity .15s ease; }
+    .map-viewport svg .node:hover .node-body { filter: brightness(.99); stroke-width: 3; }
+    .map-viewport svg .node:focus { outline: none; }
+    .map-viewport svg .node:focus .node-body { stroke: #db9a36; stroke-width: 4; }
+    .map-viewport svg .node.selected .node-body { stroke-width: 4; }
+    .map-viewport svg text { pointer-events: none; }
+    .map-help { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 19px; color: var(--muted); background: #f7fafd; font-size: .85rem; border-top: 1px solid var(--line); flex-wrap: wrap; }
+    .help-symbol { font-size: 1.05rem; color: #277078; margin-right: 4px; }
+    .mobile-note { display: none; }
+    .list-view { padding: 21px; }
+    .list-view[hidden], .map-viewport[hidden], .map-help[hidden] { display: none; }
+    .outline-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+    .outline-unit { border: 1px solid var(--line); border-top: 5px solid var(--accent); border-radius: 14px; padding: 19px; background: #fff; }
+    .outline-unit h3 { margin: 0 0 9px; font-size: 1.04rem; }
+    .outline-unit p { color: var(--muted); font-size: .9rem; line-height: 1.5; margin: 0 0 14px; }
+    .outline-unit ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+    .outline-unit li button { width: 100%; text-align: left; background: #f7f9fc; border: 1px solid #e5ebf1; border-radius: 10px; padding: 12px; font-size: .9rem; font-weight: 600; cursor: pointer; color: var(--ink); }
+    .outline-unit li button:hover { background: #eaf3f8; }
+    .detail-layout { display: grid; grid-template-columns: minmax(0,1.8fr) minmax(275px,.9fr); gap: 18px; margin-top: 18px; }
+    .detail, .support { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 26px 29px; box-shadow: 0 10px 28px rgba(35,62,87,.035); }
+    .detail { border-top: 5px solid var(--accent,#1e5672); min-height: 254px; }
+    .detail-kicker { font-size: .76rem; text-transform: uppercase; letter-spacing: .09em; font-weight: 800; color: var(--accent,#1e5672); }
+    .detail h2 { margin: 9px 0 10px; font-size: clamp(1.35rem,1.9vw,1.75rem); line-height: 1.25; letter-spacing: -.02em; }
+    .detail p { line-height: 1.6; margin: 8px 0 12px; color: #3e5367; }
+    .detail strong { color: var(--ink); }
+    .detail ul { margin: 10px 0; padding-left: 22px; line-height: 1.8; color: #344a60; }
+    .detail .callout { background: #f5f8fb; border-left: 3px solid var(--accent,#1e5672); border-radius: 5px; padding: 12px 14px; margin-top: 15px; font-size: .91rem; }
+    .support h2 { font-size: 1.04rem; margin: 0 0 14px; }
+    .support ul { color: #52677a; line-height: 1.65; margin: 0; padding-left: 21px; font-size: .91rem; }
+    .support li + li { margin-top: 9px; }
+    .support small { display: block; color: #63778a; line-height: 1.7; margin-top: 16px; padding-top: 14px; border-top: 1px solid #e6edf2; }
+    .sources { margin: 24px 0 0; font-size: .83rem; line-height: 1.65; color: #607386; }
+    .sources strong { color: #334a60; }
+    .screen-reader-only { position: absolute; clip-path: inset(50%); overflow: hidden; white-space: nowrap; width: 1px; height: 1px; }
+    @media (max-width: 950px) { .outline-grid { grid-template-columns: 1fr; } .detail-layout { grid-template-columns: 1fr; } .map-viewport svg { width: 1220px; min-height: auto; } .mobile-note { display: inline; } }
+    @media (max-width: 650px) { .page { padding: 0 14px 35px; } .hero-inner { padding: 34px 17px 36px; } .lead { font-size: .95rem; } .stat { font-size: .8rem; } .intro { align-items: stretch; } .actions { width: 100%; } .control { flex: 1 0 auto; } .mindmap-shell { border-radius: 14px; } .map-viewport svg { width: 1050px; } .detail,.support { padding: 20px; } .map-help { padding: 11px 15px; } }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior: auto !important; transition: none !important; } }
+    @media print { .hero { print-color-adjust: exact; -webkit-print-color-adjust: exact; } .actions,.map-help,.sources { display: none !important; } .page { max-width: none; padding: 0; } .map-viewport { overflow: visible; } .map-viewport svg { width: 100%; min-height: 0; } .detail-layout { grid-template-columns: 1fr; } .detail,.support,.mindmap-shell { box-shadow: none; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Estrutura pedagógica · Mapa mental interativo</div>
+      <h1>Preparação para a implementação do Novo Ciclo Contributivo (SCC)</h1>
+      <p class="lead">Da organização do módulo às sequências de aprendizagem: explora os conteúdos, os objetivos e as seis atividades do Plano de Intervenção Pedagógica (PIP).</p>
+      <div class="stats" aria-label="Resumo da formação">
+        <span class="stat">Módulo II</span>
+        <span class="stat">3 unidades</span>
+        <span class="stat">6 sequências</span>
+        <span class="stat">30 minutos</span>
+        <span class="stat">Autoaprendizagem assíncrona</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo" class="page">
+    <div class="intro">
+      <div>
+        <h2>Mapa da estrutura do e-conteúdo</h2>
+        <p>Seleciona um nó para consultar o objetivo, os conteúdos e a atividade associada.</p>
+      </div>
+      <nav class="actions" aria-label="Ferramentas do mapa">
+        <button id="mapMode" type="button" class="control" aria-pressed="true">Mapa</button>
+        <button id="listMode" type="button" class="control" aria-pressed="false">Lista</button>
+        <button id="zoomOut" type="button" class="control" title="Afastar mapa" aria-label="Afastar mapa">−</button>
+        <button id="zoomIn" type="button" class="control" title="Ampliar mapa" aria-label="Ampliar mapa">+</button>
+        <button id="reset" type="button" class="control">Repor vista</button>
+        <button id="export" type="button" class="control control-primary">Guardar SVG</button>
+      </nav>
+    </div>
+
+    <section class="mindmap-shell" aria-label="Mapa hierárquico do módulo">
+      <div class="map-viewport" id="mapViewport">
+        <svg xmlns="http://www.w3.org/2000/svg" id="mindmap" viewBox="0 0 1680 930" aria-labelledby="svgTitle svgDescription">
+          <title id="svgTitle">Mapa mental do Módulo II — Novo Ciclo Contributivo</title>
+          <desc id="svgDescription">Árvore hierárquica com um módulo, três unidades e seis sequências. Seleciona cada nó para conhecer os conteúdos e objetivos.</desc>
+        </svg>
+      </div>
+      <div id="mapHelp" class="map-help">
+        <span><span class="help-symbol" aria-hidden="true">◎</span> Os ramos representam: <strong>módulo → unidade → sequência</strong>.</span>
+        <span><span class="mobile-note">Desliza lateralmente para explorar o mapa. </span>Usa +/− para ampliar e os nós para consultar detalhes.</span>
+      </div>
+      <div id="listView" class="list-view" hidden></div>
+    </section>
+
+    <div class="detail-layout">
+      <section id="detail" class="detail" style="--accent:#1e5672" aria-live="polite" aria-atomic="true" aria-label="Detalhes do elemento selecionado">
+        <span class="detail-kicker">Módulo II · Visão geral</span>
+        <h2>Preparação para a implementação do SCC</h2>
+        <p>Identificar e ordenar os passos essenciais de preparação para o SCC, selecionar a ação adequada perante dados ou acessos incorretos e concluir a adesão ao SCC.</p>
+      </section>
+      <aside class="support" aria-labelledby="apoioTitle">
+        <h2 id="apoioTitle">Apoio transversal à autoaprendizagem</h2>
+        <ul>
+          <li>Microblocos de 4–6 minutos, com pausa e retoma.</li>
+          <li>Feedback automático explicativo e novas tentativas.</li>
+          <li>Pistas opcionais, glossário, FAQ e capturas de ecrã anotadas.</li>
+          <li>Checklist final para aplicar no contexto de trabalho.</li>
+          <li>Desafio integrador: conclusão com classificação igual ou superior a 80%.</li>
+        </ul>
+        <small>O mapa organiza o <strong>conteúdo</strong> e os objetivos de aprendizagem. Não substitui o PIP nem corresponde à implementação das atividades interativas.</small>
+      </aside>
+    </div>
+    <p class="sources"><strong>Fontes:</strong> «PIP_Tarefa1_Carla-Varanda(2).pdf» (objetivo, atividades, recursos, avaliação e duração); «M2-E-conteudos - Síncrona 2(1).pptx» (Atividade 1: estrutura módulo → unidade → sequência). A divisão em três unidades e a atribuição aproximada de cinco minutos a cada sequência são propostas de organização pedagógica. «Software XPTO» mantém a designação provisória do PIP.</p>
+  </main>
+
+  <script>
+    "use strict";
+    const units = [
+      {
+        id: "u1", number: "01", title: "Conhecer e validar", color: "#077f78", pale: "#e6f5f1", y: 123,
+        goal: "Reconhecer o percurso de preparação e verificar os dados da empresa.",
+        seq: [
+          { id: "s1", number: "01", title: "O que já sabes?", activity: "Diagnóstico inicial: três questões sem classificação", objective: "Identificar etapas e conhecimentos prévios relacionados com o SCC.", format: "Questões de diagnóstico + mapa visual do percurso", topics: ["Visão global das etapas de preparação para o SCC", "Conhecimentos prévios e temas a rever"], y: 87 },
+          { id: "s2", number: "02", title: "Empresa pronta?", activity: "Checklist interativa de validação", objective: "Verificar os dados necessários à preparação da empresa.", format: "Lista de verificação interativa", topics: ["Vínculos e contratos", "Enquadramentos e remunerações permanentes"], y: 222 }
+        ]
+      },
+      {
+        id: "u2", number: "02", title: "Corrigir e preparar acessos", color: "#a96722", pale: "#fff3e4", y: 393,
+        goal: "Identificar inconsistências e selecionar ações e acessos adequados.",
+        seq: [
+          { id: "s3", number: "03", title: "Deteta e corrige", activity: "Cenário com duas inconsistências para resolver", objective: "Distinguir problemas nos dados e escolher a ação corretiva adequada.", format: "Cenário interativo + feedback explicativo", topics: ["Deteção de dados incoerentes", "Seleção de uma ação corretiva adequada"], y: 357 },
+          { id: "s4", number: "04", title: "Quem acede e como?", activity: "Mini-caso prático de gabinete e cliente", objective: "Selecionar a representação e o modo de acesso adequados.", format: "Tomada de decisão + feedback explicativo", topics: ["Representação do gabinete e do cliente", "Conta, subconta e token"], y: 492 }
+        ]
+      },
+      {
+        id: "u3", number: "03", title: "Ordenar, aderir e aplicar", color: "#6654b4", pale: "#f0edfc", y: 663,
+        goal: "Organizar as etapas de adesão e resolver um caso integrador.",
+        seq: [
+          { id: "s5", number: "05", title: "Ordena o percurso", activity: "Ordenação das etapas do processo", objective: "Sequenciar a preparação dos dados, os acessos, a adesão e a validação posterior.", format: "Arrastar e ordenar etapas", topics: ["Validar dados → preparar acessos", "Aderir na Segurança Social Direta (SSD)", "Validar no Software XPTO → acompanhar no Painel/PSi"], y: 627 },
+          { id: "s6", number: "06", title: "Desafio final integrador", activity: "Caso prático com decisões contextualizadas", objective: "Articular a preparação dos dados, os acessos e a adesão ao SCC num caso integrado.", format: "Caso integrador com feedback, recuperação e repetição", topics: ["Preparação dos dados e dos acessos", "Adesão ao SCC e decisões em contexto", "Avaliação final: classificação igual ou superior a 80%"], y: 762 }
+        ]
+      }
+    ];
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.getElementById("mindmap");
+    const detail = document.getElementById("detail");
+    const viewport = document.getElementById("mapViewport");
+    const listView = document.getElementById("listView");
+    const lookup = new Map();
+    units.forEach(unit => { lookup.set(unit.id, { kind: "unit", unit }); unit.seq.forEach(seq => lookup.set(seq.id, { kind: "sequence", unit, seq })); });
+    lookup.set("module", { kind: "module" });
+    let selected = "module";
+    let view = {x:0, y:0, w:1680, h:930};
+    let dragging = null;
+
+    function svgEl(tag, attrs = {}, value) {
+      const node = document.createElementNS(svgNS,tag);
+      Object.entries(attrs).forEach(([name,v]) => node.setAttribute(name,String(v)));
+      if (value !== undefined) node.textContent = value;
+      return node;
+    }
+    function append(parent, tag, attrs = {}, text) { const n=svgEl(tag,attrs,text); parent.appendChild(n); return n; }
+    function label(parent, x, y, content, size=21, weight=500, color="#13283e", attrs={}) {
+      return append(parent,"text", {x,y,"font-size":size,"font-weight":weight,fill:color, ...attrs},content);
+    }
+    function lines(parent, x, y, items, size=20, color="#13283e", leading=25, weight=650) {
+      items.forEach((item,i) => label(parent,x,y+i*leading,item,size,weight,color));
+    }
+    function nodeGroup(id, ariaLabel) {
+      const group=append(scene,"g", {class:"node",tabindex:0,role:"button","aria-label":ariaLabel,"data-id":id});
+      append(group,"title",{},ariaLabel);
+      group.addEventListener("click",()=>selectNode(id));
+      group.addEventListener("keydown",ev=>{ if(ev.key==="Enter" || ev.key===" "){ev.preventDefault();selectNode(id);} });
+      return group;
+    }
+    const defs = append(svg,"defs");
+    const grad=append(defs,"linearGradient",{id:"moduleGradient",x1:"0%",y1:"0%",x2:"100%",y2:"100%"});
+    append(grad,"stop",{offset:"0%","stop-color":"#183c58"});
+    append(grad,"stop",{offset:"100%","stop-color":"#155d63"});
+    const filter=append(defs,"filter",{id:"nodeShadow",x:"-20%",y:"-25%",width:"145%",height:"160%"});
+    append(filter,"feDropShadow",{dx:0,dy:5,stdDeviation:8,"flood-color":"#173b54","flood-opacity":.09});
+    const scene=append(svg,"g",{id:"scene"});
+    append(scene,"rect",{x:0,y:0,width:1680,height:930,fill:"#f9fbfd"});
+    for(let x=35;x<1680;x+=33) for(let y=26;y<930;y+=33) append(scene,"circle",{cx:x,cy:y,r:1.1,fill:"#e4ebf2"});
+    label(scene,70,52,"ESTRUTURA DO CONTEÚDO",16,800,"#60788d",{"letter-spacing":"1.8"});
+    label(scene,450,52,"UNIDADES DE APRENDIZAGEM",16,800,"#60788d",{"letter-spacing":"1.6"});
+    label(scene,1030,52,"SEQUÊNCIAS E ATIVIDADES",16,800,"#60788d",{"letter-spacing":"1.6"});
+
+    const connectors=append(scene,"g",{"aria-hidden":"true"});
+    units.forEach(unit=>{
+      const uc=unit.y+80;
+      append(connectors,"path",{d:`M 351 470 C 405 470 395 ${uc} 445 ${uc}`,fill:"none",stroke:unit.color,"stroke-opacity":.53,"stroke-width":6,"stroke-linecap":"round"});
+      unit.seq.forEach(seq=>{
+        append(connectors,"path",{d:`M 868 ${uc} C 952 ${uc} 952 ${seq.y+59} 1030 ${seq.y+59}`,fill:"none",stroke:unit.color,"stroke-opacity":.68,"stroke-width":4,"stroke-linecap":"round"});
+      });
+    });
+
+    const root=nodeGroup("module","Módulo II: Preparação para a implementação do SCC. Mostrar detalhes.");
+    append(root,"rect",{x:72,y:355,width:279,height:240,rx:25,fill:"url(#moduleGradient)",class:"node-body",filter:"url(#nodeShadow)",stroke:"#183b53","stroke-width":2});
+    label(root,96,397,"MÓDULO II",17,830,"#b6e3e1",{"letter-spacing":"1.5"});
+    lines(root,96,448,["Preparação para a", "implementação do", "Novo Ciclo", "Contributivo (SCC)"],23,"#ffffff",29,750);
+    label(root,97,578,"30 min · assíncrono",15,650,"#bde5e5");
+
+    const unitX=445, unitWidth=423, unitHeight=160, seqX=1030, seqWidth=559, seqHeight=118;
+    units.forEach(unit=>{
+      const ug=nodeGroup(unit.id,`Unidade ${unit.number}: ${unit.title}. Mostrar detalhes.`);
+      append(ug,"rect",{x:unitX,y:unit.y,width:unitWidth,height:unitHeight,rx:21,fill:unit.pale,stroke:unit.color,"stroke-opacity":.55,"stroke-width":2.2,class:"node-body",filter:"url(#nodeShadow)"});
+      append(ug,"rect",{x:unitX+20,y:unit.y+17,width:124,height:30,rx:15,fill:unit.color});
+      label(ug,unitX+32,unit.y+38,`UNIDADE ${unit.number}`,15,820,"#ffffff");
+      const titleLines = unit.id==="u1" ? ["Conhecer e validar"] : unit.id==="u2" ? ["Corrigir e preparar", "acessos"] : ["Ordenar, aderir", "e aplicar"];
+      lines(ug,unitX+22,unit.y+81,titleLines,23,"#172d42",26,780);
+      const goalLines = unit.id==="u1" ? ["Reconhecer o percurso e", "verificar dados da empresa"] : unit.id==="u2" ? ["Detetar inconsistências e", "selecionar ações adequadas"] : ["Organizar a adesão e", "resolver um caso integrador"];
+      lines(ug,unitX+22,unit.y+126,goalLines,16,"#546b7b",21,520);
+      unit.seq.forEach(seq=>{
+        const sg=nodeGroup(seq.id,`Sequência ${seq.number}: ${seq.title}. Mostrar atividade, objetivos e conteúdos.`);
+        append(sg,"rect",{x:seqX,y:seq.y,width:seqWidth,height:seqHeight,rx:17,fill:"#ffffff",stroke:unit.color,"stroke-opacity":.35,"stroke-width":2,class:"node-body",filter:"url(#nodeShadow)"});
+        append(sg,"rect",{x:seqX,y:seq.y,width:7,height:seqHeight,rx:3.5,fill:unit.color});
+        append(sg,"rect",{x:seqX+20,y:seq.y+13,width:128,height:27,rx:13.5,fill:unit.pale});
+        label(sg,seqX+32,seq.y+32,`SEQUÊNCIA ${seq.number}`,14,800,unit.color);
+        label(sg,seqX+162,seq.y+32,"≈ 5 MIN",14,730,"#7890a2");
+        label(sg,seqX+23,seq.y+68,seq.title,25,790,"#152c42");
+        label(sg,seqX+23,seq.y+97,seq.activity,17,480,"#566b7e");
+      });
+    });
+
+    function escapeHTML(s) { return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+    function selectNode(id,{scroll=false}={}) {
+      const item=lookup.get(id);
+      if(!item) return;
+      selected=id;
+      document.querySelectorAll(".node").forEach(node=>{
+        const active=node.getAttribute("data-id")===id;
+        node.classList.toggle("selected",active);
+        node.setAttribute("aria-pressed",String(active));
+      });
+      let html="", accent="#1e5672";
+      if(item.kind==="module") {
+        html=`<div class="detail-kicker">Módulo II · Visão geral</div><h2>Preparação para a implementação do SCC</h2>
+          <p><strong>Objetivo principal:</strong> Identificar e ordenar os passos essenciais de preparação para o SCC, selecionar a ação adequada perante dados ou acessos incorretos e concluir a adesão ao SCC.</p>
+          <p><strong>Público-alvo:</strong> contabilistas e técnicos de recursos humanos.</p>
+          <div class="callout">Estrutura proposta: <strong>3 unidades</strong>, cada uma com <strong>2 sequências</strong> de cerca de 5 minutos, num total de <strong>30 minutos</strong>.</div>`;
+      } else if(item.kind==="unit") {
+        accent=item.unit.color;
+        const u=item.unit;
+        html=`<div class="detail-kicker">Unidade ${escapeHTML(u.number)} · ≈ 10 minutos</div><h2>${escapeHTML(u.title)}</h2>
+          <p><strong>Objetivo pedagógico:</strong> ${escapeHTML(u.goal)}</p>
+          <p><strong>Sequências de aprendizagem:</strong> ${u.seq.map(s=>`<span>${escapeHTML(s.number)} · ${escapeHTML(s.title)}</span>`).join("; ")}.</p>
+          <div class="callout">A unidade agrega conteúdos relacionados, que são trabalhados de forma progressiva através das atividades previstas no PIP.</div>`;
+      } else {
+        const {seq,unit}=item;accent=unit.color;
+        html=`<div class="detail-kicker">Unidade ${escapeHTML(unit.number)} · Sequência ${escapeHTML(seq.number)} · ≈ 5 minutos</div>
+          <h2>${escapeHTML(seq.title)}</h2>
+          <p><strong>Objetivo pedagógico:</strong> ${escapeHTML(seq.objective)}</p>
+          <p><strong>Atividade prevista no PIP:</strong> ${escapeHTML(seq.activity)}.</p>
+          <strong>Conteúdos-chave</strong><ul>${seq.topics.map(t=>`<li>${escapeHTML(t)}</li>`).join("")}</ul>
+          <div class="callout"><strong>Formato de e-conteúdo:</strong> ${escapeHTML(seq.format)}.</div>`;
+      }
+      detail.style.setProperty("--accent",accent);
+      detail.innerHTML=html;
+      if(scroll) detail.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth",block:"start"});
+    }
+
+    function renderList() {
+      const grid=document.createElement("div");grid.className="outline-grid";
+      units.forEach(unit=>{
+        const article=document.createElement("article"); article.className="outline-unit";article.style.setProperty("--accent",unit.color);
+        article.innerHTML=`<h3>Unidade ${escapeHTML(unit.number)} — ${escapeHTML(unit.title)}</h3><p>${escapeHTML(unit.goal)}</p>`;
+        const list=document.createElement("ul");
+        unit.seq.forEach(seq=>{
+          const li=document.createElement("li"),btn=document.createElement("button");btn.type="button";
+          btn.textContent=`${seq.number}. ${seq.title} — ${seq.activity}`;
+          btn.addEventListener("click",()=>selectNode(seq.id,{scroll:true}));
+          li.appendChild(btn);list.appendChild(li);
+        });
+        article.appendChild(list);grid.appendChild(article);
+      });
+      listView.replaceChildren(grid);
+    }
+
+    function applyViewBox(){svg.setAttribute("viewBox",`${view.x} ${view.y} ${view.w} ${view.h}`);}
+    function zoom(scale){
+      const w=Math.min(1680,Math.max(525,view.w/scale)), h=w*930/1680;
+      view={x:view.x+(view.w-w)/2,y:view.y+(view.h-h)/2,w,h};
+      view.x=Math.min(1680-w,Math.max(0,view.x)); view.y=Math.min(930-h,Math.max(0,view.y));
+      applyViewBox();
+    }
+    function reset(){view={x:0,y:0,w:1680,h:930};applyViewBox();viewport.scrollLeft=0;}
+    function setMode(mode){
+      const map=mode==="map";
+      viewport.hidden=!map;document.getElementById("mapHelp").hidden=!map;listView.hidden=map;
+      document.getElementById("mapMode").setAttribute("aria-pressed",String(map));
+      document.getElementById("listMode").setAttribute("aria-pressed",String(!map));
+      for(const id of ["zoomOut","zoomIn","reset","export"]) document.getElementById(id).disabled=!map;
+    }
+    document.getElementById("zoomIn").addEventListener("click",()=>zoom(1.27));
+    document.getElementById("zoomOut").addEventListener("click",()=>zoom(1/1.27));
+    document.getElementById("reset").addEventListener("click",reset);
+    document.getElementById("mapMode").addEventListener("click",()=>setMode("map"));
+    document.getElementById("listMode").addEventListener("click",()=>setMode("list"));
+    document.getElementById("export").addEventListener("click",()=>{
+      const clone=svg.cloneNode(true);
+      clone.setAttribute("xmlns",svgNS);
+      clone.setAttribute("width","1680");clone.setAttribute("height","930");
+      clone.setAttribute("viewBox","0 0 1680 930");
+      const data=new XMLSerializer().serializeToString(clone);
+      const url=URL.createObjectURL(new Blob([data],{type:"image/svg+xml;charset=utf-8"}));
+      const a=document.createElement("a");a.href=url;a.download="mindmap-estrutura-scc.svg";document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    });
+    svg.addEventListener("pointerdown",ev=>{
+      if(ev.target.closest(".node") || ev.button!==0) return;
+      dragging={x:ev.clientX,y:ev.clientY,ox:view.x,oy:view.y};
+      svg.setPointerCapture(ev.pointerId);
+    });
+    svg.addEventListener("pointermove",ev=>{
+      if(!dragging) return;
+      const rect=svg.getBoundingClientRect();
+      view.x=Math.min(1680-view.w,Math.max(0,dragging.ox-(ev.clientX-dragging.x)*view.w/rect.width));
+      view.y=Math.min(930-view.h,Math.max(0,dragging.oy-(ev.clientY-dragging.y)*view.h/rect.height));
+      applyViewBox();
+    });
+    ["pointerup","pointercancel","lostpointercapture"].forEach(evt=>svg.addEventListener(evt,()=>{dragging=null;}));
+    renderList();selectNode("module");
+  </script>
+</body>
+</html>
